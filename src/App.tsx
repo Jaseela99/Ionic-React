@@ -1,13 +1,10 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
-import {
-  IonApp,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  setupIonicReact,
-} from "@ionic/react";
-import "./App.css";
+import { IonApp, IonContent, setupIonicReact } from "@ionic/react";
+
+import Login from "./components/Login";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import DashBoard from "./components/DashBoard";
+
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
 
@@ -25,17 +22,19 @@ import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
 import "./themes/variables.css";
 setupIonicReact();
-function App() {
+const App: React.FC = () => {
   return (
-    <>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>Art App</IonTitle>
-        </IonToolbar>
-        <Outlet />
-      </IonHeader>
-    </>
+    <IonApp>
+      <IonContent>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/dashboard" element={<DashBoard />} />
+          </Routes>
+        </BrowserRouter>
+      </IonContent>
+    </IonApp>
   );
-}
+};
 
 export default App;
