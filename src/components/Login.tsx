@@ -10,6 +10,7 @@ import {
   useIonAlert,
   useIonLoading,
   IonToolbar,
+  IonCheckbox,
 } from "@ionic/react";
 import { useNavigate } from "react-router-dom";
 import useUserStore from "../store/userStore";
@@ -18,23 +19,46 @@ const Login = () => {
   const addUser = useUserStore((state) => state.addUser);
   const [name, setName] = React.useState<any>("");
   const [email, setEmail] = React.useState<any>("");
-  const [role, setRole] = React.useState<any>("");
+  const [role, setRole] = React.useState<any>({frontend:false,backend:false});
+  const [preferredRole, setPreferredRole] = React.useState<any>([]);
   const [password, setPassword] = React.useState<any>("");
   const navigate = useNavigate();
   const [alert] = useIonAlert();
   const [present, dismiss] = useIonLoading();
+  console.log(preferredRole)
+  const checkBoxHandler=(e:any)=>{
+    if(e.target.value==="frontend"){
+      // role.frontend =e.detail.checked
+      setRole({frontend:e.detail.checked})
+    }
+    if(e.target.value==="backend"){
+      // role.backend =e.detail.checked
+      setRole({backend:e.detail.checked})
+    }
+    if (e.detail.checked === true) {
+      setPreferredRole((prev: any) => {
+        if (!prev.includes(e.detail.value)) {
+          return [...prev, e.detail.value];
+        }
+        return prev;
+      });
+    }
+    if (e.detail.checked === false) {
+      const newVal = preferredRole.filter((val: any) => val !== e.detail.value);
+      setPreferredRole(newVal);
+    }
+  }
   const onSubmit = (e: any) => {
     e.preventDefault();
     if (!name) return alert("userName required");
     if (!email) return alert("email required");
     if (!role) return alert("role required");
     if (!password) return alert("password required");
-    console.log(name, "name");
     addUser({
       id: Math.ceil(Math.random() * 1000000),
       name: name,
       email: email,
-      role: role,
+      role: preferredRole,
       password: password,
     });
     present({ message: "loading..." });
@@ -72,13 +96,21 @@ const Login = () => {
             ></IonInput>
           </IonItem>
           <IonItem>
-            <IonLabel position="floating">Role:</IonLabel>
-            <IonInput
-              type="text"
-              value={role}
-              onIonChange={(e: any) => setRole(e.target.value)}
-            ></IonInput>
+            <IonLabel>Role:</IonLabel>
+            <IonCheckbox
+            value="frontend"
+            checked={preferredRole.indexOf("frontend")>-1 || role.frontend}
+            onIonChange={checkBoxHandler}
+            style={{marginRight:"1%"}}/>
+            <IonLabel>Front-End</IonLabel>
+            <IonCheckbox
+            value="backend"
+            checked={preferredRole.indexOf("backend")>-1 || role.backend}
+            onIonChange={checkBoxHandler}
+            style={{marginRight:"1%"}}/>
+            <IonLabel>Back-End</IonLabel>
           </IonItem>
+          
           <IonItem>
             <IonLabel position="floating">Password:</IonLabel>
             <IonInput
